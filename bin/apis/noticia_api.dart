@@ -5,12 +5,14 @@ import 'package:shelf_router/shelf_router.dart';
 
 import '../models/notice_model.dart';
 import '../services/generic_service.dart';
+import 'api.dart';
 
-class NoticiaApi {
+class NoticiaApi extends Api {
   final GenericService<NoticiaModel> _service;
   NoticiaApi(this._service);
 
-  Handler get handler {
+  @override
+  Handler getHandler({List<Middleware>? middlewares, bool isSecurity = true}) {
     Router router = Router();
 
     // listagem
@@ -46,6 +48,7 @@ class NoticiaApi {
       // _service.delete(1);
       return Response.ok('Noticia deletada');
     });
-    return router;
+    return createHandler(
+        router: router, middlewares: middlewares, isSecurity: isSecurity);
   }
 }

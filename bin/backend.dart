@@ -1,27 +1,22 @@
 import 'package:shelf/shelf.dart';
-import 'package:shelf/shelf_io.dart' as shelf_io;
-
 import 'apis/login_api.dart';
 import 'apis/noticia_api.dart';
 import 'infra/custom_server.dart';
+import 'infra/dependency_injector/injects.dart';
 import 'infra/middleware_interception.dart';
-import 'infra/security/security_service.dart';
-import 'infra/security/security_service_imp.dart';
-import 'services/notice_service.dart';
 import 'utils/custom_env.dart';
 
 void main() async {
-  SecurityService _securityService = SecurityServiceImp();
+  final _di = Injects.initialize();
+
   var cascadeHandler = Cascade()
-      .add(LoginApi(_securityService).handler)
-      .add(NoticiaApi(NoticiaService()).handler)
+      .add(_di.get<LoginApi>().getHandler())
+      .add(_di.get<NoticiaApi>().getHandler(isSecurity: true))
       .handler;
 
   var handler = Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(MiddlewareInterception().middleware)
-      .addMiddleware(_securityService.authorization)
-      .addMiddleware(_securityService.verifyJwt)
       .addHandler(cascadeHandler);
 
   await CustomServer().initialize(
