@@ -16,8 +16,8 @@ class NoticiaApi extends Api {
     Router router = Router();
 
     // listagem
-    router.get('/blog/noticias', (Request req) {
-      List<NoticiaModel> noticias = _service.findAll();
+    router.get('/blog/noticias', (Request req)async {
+      List<NoticiaModel> noticias = await _service.findAll();
       List<Map> notciasMap = noticias.map((e) => e.toJson()).toList();
 
       return Response.ok(
@@ -28,9 +28,9 @@ class NoticiaApi extends Api {
     // nova noticia
     router.post('/blog/noticias', (Request req) async {
       var body = await req.readAsString();
-      _service.save(NoticiaModel.fromJson(jsonDecode(body)));
+      var result = await _service.save(NoticiaModel.fromRequest(jsonDecode(body)));
 
-      return Response(201);
+      return result ? Response(201):Response(500);
     });
 
     // /blog/noticias?id=1 editar noticia
