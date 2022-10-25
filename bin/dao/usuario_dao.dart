@@ -34,7 +34,7 @@ class UsuarioDAO implements DAO<UsuarioModel> {
   Future<UsuarioModel?> findOne(int id) async {
     var result = await _dbConfiguration.execQuery('SELECT * FROM usuarios where id = ?', [id]);
 
-    return result.affectedRows == 0
+    return result.isEmpty
         ? null
         : UsuarioModel.fromMap(result.first.fields);
   }

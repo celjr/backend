@@ -36,7 +36,7 @@ class NoticiaDAO implements DAO<NoticiaModel>{
   Future<NoticiaModel?> findOne(int id) async {
     var result = await _dbConfiguration.execQuery('SELECT * FROM noticias where id = ?', [id]);
 
-    return result.affectedRows == 0
+    return result.isEmpty
         ? null
         : NoticiaModel.fromMap(result.first.fields);
   }
